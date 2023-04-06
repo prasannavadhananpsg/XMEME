@@ -4,4 +4,6 @@ import com.crio.starter.data.Meme;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 public interface MemeRepository extends MongoRepository<Meme, String> {
+
+    Meme findByCaptionAndNameAndUrl(String caption, String name, String url);
 }

@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import java.util.Collections;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,6 +24,16 @@ public class MemeController {
 
     @PostMapping("/memes")
     public ResponseEntity<?> createMeme(@RequestBody MemeDTO memeDTO) {
+        
+        if(memeService.memeExists(memeDTO)){
+      try{   Meme meme =   memeService.findMeme(memeDTO);
+        return new ResponseEntity<>(Collections.singletonMap("id", meme.getId()), HttpStatus.CONFLICT);
+        //return (ResponseEntity<?>) ResponseEntity.status(HttpStatus.CONFLICT);
+      } catch(Exception ex){
+        
+      } 
+
+        }
         Meme meme = memeService.saveMeme(memeDTO);
         return ResponseEntity.ok(Collections.singletonMap("id", meme.getId()));
     }
@@ -30,9 +41,6 @@ public class MemeController {
     @GetMapping("/memes")
     public ResponseEntity<?> getLatest100Memes() {
         List<Meme> memes = memeService.getLatest100Memes();
-        if (memes.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
         return ResponseEntity.ok(memes);
     }
 
